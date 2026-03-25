@@ -1,15 +1,22 @@
 /* Task 2: 
-TODO: Enhance User Experience by adding visual highlights to selected answers.
-Hint: You can use the className attribute for highlighting. */
+Enhance User Experience by adding visual highlights to selected answers. */
 .selected {
-    cursor: pointer; /* Change cursor on hover for interactivity */
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: 2px solid #45a049;
+    font-weight: bold;
   }
   
   /* Additional styling for better user experience */
   .selected:hover {
     cursor: pointer;
+    background-color: #45a049;
   }
   
+  li:hover {
+    background-color: #e8e8e8;
+  }
   
   /* Container styles */
   div {
@@ -47,6 +54,7 @@ Hint: You can use the className attribute for highlighting. */
     margin: 4px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
+    transition: all 0.3s ease;
   }
   
   /* Submit button styles */
