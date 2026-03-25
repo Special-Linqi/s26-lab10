@@ -8,6 +8,7 @@ interface QuizState {
   currentQuestion: QuizQuestion | null
   selectedAnswer: string | null
   score: number
+  quizCompleted: boolean
 }
 
 const Quiz: React.FC = () => {
@@ -18,6 +19,7 @@ const Quiz: React.FC = () => {
     currentQuestion: quizCore.getCurrentQuestion(),
     selectedAnswer: null,  // Initialize the selected answer.
     score: quizCore.getScore(),  // Initialize the score.
+    quizCompleted: false,
   });
 
   const handleOptionSelect = (option: string): void => {
@@ -26,13 +28,39 @@ const Quiz: React.FC = () => {
 
 
   const handleButtonClick = (): void => {
-    // TODO: Task3 - Implement the logic for button click ("Next Question" and "Submit").
-    // Hint: You might want to check for a function in the core logic to help with this.
+    // Task3 - Implement the logic for button click ("Next Question" and "Submit").
+    if (!state.selectedAnswer) {
+      alert('Please select an answer before proceeding.');
+      return;
+    }
+
+    // Record the answer and update the score
+    quizCore.answerQuestion(state.selectedAnswer);
+    
+    // Check if there is a next question
+    if (quizCore.hasNextQuestion()) {
+      // Move to the next question
+      quizCore.nextQuestion();
+      setState({
+        currentQuestion: quizCore.getCurrentQuestion(),
+        selectedAnswer: null,
+        score: quizCore.getScore(),
+        quizCompleted: false,
+      });
+    } else {
+      // Quiz is completed, show the final score
+      setState({
+        currentQuestion: null,
+        selectedAnswer: null,
+        score: quizCore.getScore(),
+        quizCompleted: true,
+      });
+    }
   } 
 
-  const { currentQuestion, selectedAnswer, score } = state;
+  const { currentQuestion, selectedAnswer, score, quizCompleted } = state;
 
-  if (!currentQuestion) {
+  if (quizCompleted) {
     return (
       <div>
         <h2>Quiz Completed</h2>
@@ -40,6 +68,17 @@ const Quiz: React.FC = () => {
       </div>
     );
   }
+
+  if (!currentQuestion) {
+    return (
+      <div>
+        <h2>Loading Quiz...</h2>
+      </div>
+    );
+  }
+
+  const isLastQuestion = !quizCore.hasNextQuestion();
+  const buttonText = isLastQuestion ? 'Submit' : 'Next Question';
 
   return (
     <div>
@@ -62,7 +101,7 @@ const Quiz: React.FC = () => {
       <h3>Selected Answer:</h3>
       <p>{selectedAnswer ?? 'No answer selected'}</p>
 
-      <button onClick={handleButtonClick}>Next Question</button>
+      <button onClick={handleButtonClick}>{buttonText}</button>
     </div>
   );
 };
